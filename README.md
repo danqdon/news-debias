@@ -4,6 +4,10 @@ news-debias is an exploratory Python project intended to study how different new
 
 The project is currently in an early experimental stage, and the focus is on building and validating a small, reliable foundation before adding analysis features.
 
+## Current capability
+
+The project currently supports deterministic sentence segmentation of manually supplied text. Each sentence keeps exact character offsets into the original text so later analysis can attach evidence directly to source spans. More advanced analysis is not implemented yet.
+
 ## Setup (uv)
 
 ```bash
