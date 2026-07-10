@@ -17,18 +17,17 @@ class ArticlePreprocessor:
 
     def _sentences_from_text(self, text: str) -> tuple[Sentence, ...]:
         return tuple(
-            self._sentence_from_match(match, text)
+            self._sentence_from_match(match)
             for match in _SENTENCE_PATTERN.finditer(text)
         )
 
-    def _sentence_from_match(self, match: re.Match[str], text: str) -> Sentence:
+    def _sentence_from_match(self, match: re.Match[str]) -> Sentence:
         start_offset = match.start()
-        end_offset = match.end()
-        while text[end_offset - 1].isspace():
-            end_offset -= 1
+        sentence_text = match.group(0).rstrip()
+        end_offset = start_offset + len(sentence_text)
 
         return Sentence(
-            text=text[start_offset:end_offset],
+            text=sentence_text,
             start_offset=start_offset,
             end_offset=end_offset,
         )
