@@ -49,14 +49,35 @@ def test_extracts_unnamed_officials_suggested_as_one_phrase() -> None:
     ]
 
 
-def test_returns_matches_in_article_order() -> None:
+def test_extracts_attribution_in_middle_of_sentence() -> None:
     _, attributions = _extract(
-        "Experts say the policy will change. Critics argued the policy was unfair."
+        "According to the report, experts say the proposal may reduce costs."
+    )
+
+    assert [attribution.text for attribution in attributions] == ["experts say"]
+
+
+def test_extracts_two_attributions_in_one_sentence() -> None:
+    _, attributions = _extract(
+        "Experts say prices will fall, while critics argue the plan is risky."
     )
 
     assert [attribution.text for attribution in attributions] == [
         "Experts say",
-        "Critics argued",
+        "critics argue",
+    ]
+
+
+def test_returns_matches_in_article_order() -> None:
+    _, attributions = _extract(
+        "Experts say the policy will change. According to the note, analysts believe it will pass. Officials claim the policy is affordable, while critics argue the estimate is unrealistic."
+    )
+
+    assert [attribution.text for attribution in attributions] == [
+        "Experts say",
+        "analysts believe",
+        "Officials claim",
+        "critics argue",
     ]
 
 
@@ -82,7 +103,7 @@ def test_returns_correct_zero_based_sentence_index() -> None:
 
 def test_slicing_invariant_holds_for_each_result() -> None:
     article, attributions = _extract(
-        "Experts say this will work. Sources claim updates are pending."
+        "Experts say this will work, while critics argue it is risky. Sources claim updates are pending."
     )
 
     for attribution in attributions:
@@ -116,8 +137,10 @@ def test_returns_empty_tuple_when_no_vague_attributions_exist() -> None:
     assert attributions == ()
 
 
-def test_does_not_match_when_actor_not_at_sentence_start() -> None:
-    _, attributions = _extract("The experts say the policy will reduce costs.")
+def test_does_not_match_non_configured_actor_prefixes() -> None:
+    _, attributions = _extract(
+        "The experts say the policy will reduce costs. Government officials said the policy will reduce costs. Reuters sources said the policy will reduce costs."
+    )
 
     assert attributions == ()
 
@@ -133,14 +156,6 @@ def test_does_not_match_actor_followed_by_modifier_before_verb() -> None:
 def test_does_not_match_officials_with_intervening_modifier() -> None:
     _, attributions = _extract(
         "Officials at the ministry said the policy will reduce costs."
-    )
-
-    assert attributions == ()
-
-
-def test_does_not_match_non_configured_actor_prefixes() -> None:
-    _, attributions = _extract(
-        "Government officials said the policy will reduce costs. Reuters sources said the policy will reduce costs."
     )
 
     assert attributions == ()

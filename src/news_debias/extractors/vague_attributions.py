@@ -9,6 +9,17 @@ _VAGUE_ATTRIBUTION_PATTERN = re.compile(
     rf"(?:{_ACTOR_FRAGMENT})\s+(?:{_ATTRIBUTION_VERB_FRAGMENT})(?!\w)",
     re.IGNORECASE,
 )
+_ALLOWED_PREFIX_SUFFIXES = (
+    ", ",
+    "; ",
+    ": ",
+    ". ",
+    "? ",
+    "! ",
+    "while ",
+    "but ",
+    "and ",
+)
 
 
 class VagueAttributionExtractor:
@@ -28,17 +39,26 @@ class VagueAttributionExtractor:
         sentence: Sentence,
         sentence_index: int,
     ) -> list[VagueAttribution]:
-        match = _VAGUE_ATTRIBUTION_PATTERN.match(sentence.text)
-        if match is None:
-            return []
+        attributions: list[VagueAttribution] = []
+        for match in _VAGUE_ATTRIBUTION_PATTERN.finditer(sentence.text):
+            if not self._has_allowed_prefix(sentence.text, match.start()):
+                continue
 
-        start_offset = sentence.start_offset + match.start()
-        end_offset = sentence.start_offset + match.end()
-        return [
-            VagueAttribution(
-                text=match.group(),
-                start_offset=start_offset,
-                end_offset=end_offset,
-                sentence_index=sentence_index,
+            start_offset = sentence.start_offset + match.start()
+            end_offset = sentence.start_offset + match.end()
+            attributions.append(
+                VagueAttribution(
+                    text=match.group(),
+                    start_offset=start_offset,
+                    end_offset=end_offset,
+                    sentence_index=sentence_index,
+                )
             )
-        ]
+        return attributions
+
+    def _has_allowed_prefix(self, sentence_text: str, match_start: int) -> bool:
+        if match_start == 0:
+            return True
+
+        prefix = sentence_text[:match_start].lower()
+        return prefix.endswith(_ALLOWED_PREFIX_SUFFIXES)

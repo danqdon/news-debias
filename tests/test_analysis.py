@@ -69,6 +69,23 @@ def test_analysis_includes_vague_attribution_results() -> None:
     )
 
 
+def test_analysis_extracts_middle_and_multiple_vague_attributions() -> None:
+    analysis = ArticleAnalyzer().analyze(
+        "According to the report, analysts believe the final cost could reach €15 million. Officials claim the plan is affordable, while critics argue the estimate is unrealistic."
+    )
+
+    assert [item.text for item in analysis.vague_attributions] == [
+        "analysts believe",
+        "Officials claim",
+        "critics argue",
+    ]
+    assert [item.sentence_index for item in analysis.vague_attributions] == [0, 1, 1]
+    assert [item.text for item in analysis.numerical_expressions] == ["€15 million"]
+
+    for item in analysis.vague_attributions:
+        assert analysis.article.text[item.start_offset : item.end_offset] == item.text
+
+
 def test_analysis_keeps_existing_numerical_expression_results_unchanged() -> None:
     analysis = ArticleAnalyzer().analyze(
         "Officials said the project would cost €12 million."

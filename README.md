@@ -18,6 +18,14 @@ analysis = ArticleAnalyzer().analyze(
 
 Current analysis output is intentionally narrow: deterministic sentence segmentation, basic numerical-expression extraction, rule-based vague-attribution phrase extraction, and exact offsets into the source text.
 
+## Demo
+
+Run the minimal local example:
+
+```bash
+uv run python examples/basic_demo.py
+```
+
 ## Setup (uv)
 
 ```bash
