@@ -52,12 +52,38 @@ def test_fixture_analysis_contains_euro_million_with_offsets_and_sentence_index(
     )
 
 
+def test_analysis_includes_vague_attribution_results() -> None:
+    analysis = ArticleAnalyzer().analyze(
+        "Experts say the project would cost €12 million."
+    )
+
+    assert [item.text for item in analysis.vague_attributions] == ["Experts say"]
+    assert analysis.vague_attributions[0].sentence_index == 0
+    assert (
+        analysis.article.text[
+            analysis.vague_attributions[0].start_offset : analysis.vague_attributions[
+                0
+            ].end_offset
+        ]
+        == analysis.vague_attributions[0].text
+    )
+
+
+def test_analysis_keeps_existing_numerical_expression_results_unchanged() -> None:
+    analysis = ArticleAnalyzer().analyze(
+        "Officials said the project would cost €12 million."
+    )
+
+    assert [item.text for item in analysis.numerical_expressions] == ["€12 million"]
+
+
 def test_text_without_numerical_expressions_returns_empty_tuple() -> None:
     analysis = ArticleAnalyzer().analyze(
         "No quantitative claims are present in this text."
     )
 
     assert analysis.numerical_expressions == ()
+    assert analysis.vague_attributions == ()
 
 
 def test_empty_input_raises_value_error() -> None:

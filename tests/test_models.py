@@ -2,7 +2,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from news_debias import Article, NumericalExpression, Sentence
+from news_debias import Article, NumericalExpression, Sentence, VagueAttribution
 
 
 def test_sentence_is_immutable() -> None:
@@ -44,3 +44,15 @@ def test_numerical_expression_is_immutable() -> None:
 
     with pytest.raises(FrozenInstanceError):
         expression.text = "€13 million"
+
+
+def test_vague_attribution_is_immutable() -> None:
+    attribution = VagueAttribution(
+        text="Experts say",
+        start_offset=0,
+        end_offset=11,
+        sentence_index=0,
+    )
+
+    with pytest.raises(FrozenInstanceError):
+        attribution.text = "Sources say"

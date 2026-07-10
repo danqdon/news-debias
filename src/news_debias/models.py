@@ -23,6 +23,15 @@ class NumericalExpression:
 
 
 @dataclass(frozen=True)
+class VagueAttribution:
+    text: str
+    start_offset: int
+    end_offset: int
+    sentence_index: int
+
+
+@dataclass(frozen=True)
 class ArticleAnalysis:
     article: Article
     numerical_expressions: tuple[NumericalExpression, ...]
+    vague_attributions: tuple[VagueAttribution, ...]
