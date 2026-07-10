@@ -1,0 +1,29 @@
+# Virtual environments
+.venv/
+
+# Environment files
+.env
+.env.*
+
+# Python cache and artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local outputs
+results/
+artifacts/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
