@@ -8,6 +8,16 @@ The project is currently in an early experimental stage, and the focus is on bui
 
 The project currently supports deterministic sentence segmentation and deterministic extraction of basic numerical expressions from manually supplied text. Sentences and extracted expressions keep exact character offsets into the original text so later analysis can attach evidence directly to source spans. The project does not yet evaluate truth, sourcing, bias, or unsupported claims.
 
+```python
+from news_debias import ArticleAnalyzer
+
+analysis = ArticleAnalyzer().analyze(
+	"Officials said the project would cost €12 million."
+)
+```
+
+Current analysis output is intentionally narrow: deterministic sentence segmentation, basic numerical-expression extraction, and exact offsets into the source text.
+
 ## Setup (uv)
 
 ```bash
