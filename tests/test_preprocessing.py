@@ -43,6 +43,18 @@ def test_blank_lines_do_not_become_sentences() -> None:
     assert [sentence.text for sentence in article.sentences] == ["First.", "Second!"]
 
 
+def test_punctuated_sentence_ignores_following_spaces() -> None:
+    article = ArticlePreprocessor().process("First.   Second!")
+
+    assert [sentence.text for sentence in article.sentences] == ["First.", "Second!"]
+
+
+def test_punctuated_sentence_ignores_following_blank_line() -> None:
+    article = ArticlePreprocessor().process("First.\n\nSecond!")
+
+    assert [sentence.text for sentence in article.sentences] == ["First.", "Second!"]
+
+
 def test_surrounding_whitespace_is_excluded_from_sentence_text() -> None:
     article = ArticlePreprocessor().process(
         "  First sentence.   \n  Second sentence?   "
@@ -81,3 +93,24 @@ def test_final_sentence_without_terminal_punctuation_is_returned() -> None:
         "First sentence.",
         "Final sentence",
     ]
+
+
+def test_final_sentence_without_terminal_punctuation_excludes_trailing_spaces() -> None:
+    article = ArticlePreprocessor().process("First sentence. Final sentence   ")
+
+    assert [sentence.text for sentence in article.sentences] == [
+        "First sentence.",
+        "Final sentence",
+    ]
+
+
+def test_offsets_preserve_full_text_positions_for_non_initial_sentence() -> None:
+    article = ArticlePreprocessor().process("First. Second!")
+    second_sentence = article.sentences[1]
+
+    assert second_sentence.start_offset == 7
+    assert second_sentence.end_offset == 14
+    assert (
+        article.text[second_sentence.start_offset : second_sentence.end_offset]
+        == "Second!"
+    )
