@@ -12,3 +12,11 @@ class Sentence:
 class Article:
     text: str
     sentences: tuple[Sentence, ...]
+
+
+@dataclass(frozen=True)
+class NumericalExpression:
+    text: str
+    start_offset: int
+    end_offset: int
+    sentence_index: int

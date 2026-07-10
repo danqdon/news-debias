@@ -6,7 +6,7 @@ The project is currently in an early experimental stage, and the focus is on bui
 
 ## Current capability
 
-The project currently supports deterministic sentence segmentation of manually supplied text. Each sentence keeps exact character offsets into the original text so later analysis can attach evidence directly to source spans. More advanced analysis is not implemented yet.
+The project currently supports deterministic sentence segmentation and deterministic extraction of basic numerical expressions from manually supplied text. Sentences and extracted expressions keep exact character offsets into the original text so later analysis can attach evidence directly to source spans. The project does not yet evaluate truth, sourcing, bias, or unsupported claims.
 
 ## Setup (uv)
 

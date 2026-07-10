@@ -2,7 +2,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from news_debias import Article, Sentence
+from news_debias import Article, NumericalExpression, Sentence
 
 
 def test_sentence_is_immutable() -> None:
@@ -32,3 +32,15 @@ def test_article_sentences_is_tuple() -> None:
     )
 
     assert isinstance(article.sentences, tuple)
+
+
+def test_numerical_expression_is_immutable() -> None:
+    expression = NumericalExpression(
+        text="€12 million",
+        start_offset=10,
+        end_offset=21,
+        sentence_index=0,
+    )
+
+    with pytest.raises(FrozenInstanceError):
+        expression.text = "€13 million"
