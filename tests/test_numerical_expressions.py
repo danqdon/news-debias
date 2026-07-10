@@ -103,3 +103,55 @@ def test_does_not_produce_overlapping_duplicate_results() -> None:
     assert len({(e.start_offset, e.end_offset) for e in expressions}) == len(
         expressions
     )
+
+
+def test_extracts_grouped_decimal_expression() -> None:
+    _, expressions = _extract("The estimate is 1,500.25.")
+
+    assert [expression.text for expression in expressions] == ["1,500.25"]
+
+
+def test_extracts_currency_grouped_decimal_with_magnitude() -> None:
+    _, expressions = _extract("The project cost is €1,500.25 million.")
+
+    assert [expression.text for expression in expressions] == ["€1,500.25 million"]
+
+
+def test_does_not_extract_magnitude_without_required_whitespace() -> None:
+    _, expressions = _extract("The estimate is 12million.")
+
+    assert expressions == ()
+
+
+def test_does_not_extract_currency_with_intervening_space_as_currency_expression() -> (
+    None
+):
+    _, expressions = _extract("The estimate is € 12.")
+
+    assert [expression.text for expression in expressions] == ["12"]
+
+
+def test_does_not_extract_percentage_with_intervening_space_as_percentage_expression() -> (
+    None
+):
+    _, expressions = _extract("The rate is 12 %.")
+
+    assert [expression.text for expression in expressions] == ["12"]
+
+
+def test_does_not_extract_number_embedded_in_word() -> None:
+    _, expressions = _extract("Release version12 is now available.")
+
+    assert expressions == ()
+
+
+def test_extracts_plain_integer_that_may_represent_date_like_text() -> None:
+    _, expressions = _extract("The report was published in 2026.")
+
+    assert [expression.text for expression in expressions] == ["2026"]
+
+
+def test_extracts_number_before_hyphenated_term() -> None:
+    _, expressions = _extract("A 12-month plan was proposed.")
+
+    assert [expression.text for expression in expressions] == ["12"]
